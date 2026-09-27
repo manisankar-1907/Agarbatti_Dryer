@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agarbatti Dryer — Monitoring Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">AG</div>
+      <div class="brand-text">
+        <h1 data-i18n="appName">Agarbatti Dryer</h1>
+        <p data-i18n="appSubtitle">Solar Forced-Hot-Air Drying Chamber</p>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" data-page="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span class="label" data-i18n="navDashboard">Dashboard</span>
+      </li>
+      <li class="nav-item" data-page="analytics">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M12 19V5M20 19v-7"/></svg>
+        <span class="label" data-i18n="navAnalytics">Analytics</span>
+      </li>
+      <li class="nav-item" data-page="system">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.36a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.64 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.64 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06A2 2 0 1 1 7.07 4.24l.06.06A1.7 1.7 0 0 0 9 4.64a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.36 9c.1.32.28.61.51.85"/></svg>
+        <span class="label" data-i18n="navSystem">System</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div id="sidebar-connectivity"></div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2 id="topbar-title-main">Dashboard</h2>
+        <p id="topbar-title-sub">Solar Forced-Hot-Air Drying Chamber</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge"><span class="dot"></span> <span data-i18n="simulationMode">Simulation mode</span></span>
+        <span class="badge" style="font-weight:500;"><span data-i18n="lastUpdated">Last updated</span>:&nbsp;<span id="last-updated-val" class="num">--:--</span></span>
+        <select class="lang-select" id="lang-select">
+          <option value="en">English</option>
+          <option value="ta">தமிழ்</option>
+          <option value="hi">हिन्दी</option>
+          <option value="te">తెలుగు</option>
+        </select>
+        <button class="mic-btn" id="mic-header-btn" title="Voice command">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===================== DASHBOARD PAGE ===================== -->
+    <section class="page active" id="page-dashboard">
+
+      <div class="section">
+        <div id="batch-card" class="batch-card"></div>
+      </div>
+
+      <div class="section">
+        <div class="card completion-card" id="completion-card"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label" data-i18n="temperature">Temperature</div>
+        <div class="grid grid-4" id="temp-zone-grid"></div>
+      </div>
+
+      <div class="section grid grid-2">
+        <div class="card stat-card">
+          <div class="card-title-row"><h3 data-i18n="heater">Heater</h3></div>
+          <div id="heater-card-body"></div>
+        </div>
+        <div class="card stat-card">
+          <div class="card-title-row"><h3 data-i18n="solarBattery">Solar & battery</h3></div>
+          <div id="solar-card-body"></div>
+        </div>
+      </div>
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row">
+            <h3 data-i18n="dryingUniformity">Drying uniformity</h3>
+          </div>
+          <div id="uniformity-body"></div>
+        </div>
+        <div class="card">
+          <div class="card-title-row">
+            <h3 data-i18n="processFlow">Drying process flow</h3>
+          </div>
+          <div id="process-flow-body"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row">
+            <h3 data-i18n="dryingConditions">Drying conditions</h3>
+            <div class="chart-tabs">
+              <button class="chart-tab active" data-mode="temp" data-i18n="temperatureVsTime">Temperature vs time</button>
+              <button class="chart-tab" data-mode="rh" data-i18n="humidityVsTime">RH vs time</button>
+            </div>
+          </div>
+          <div class="chart-container"><canvas id="dashboard-chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="alerts">Alerts</h3></div>
+          <div id="alerts-body"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================== ANALYTICS PAGE ===================== -->
+    <section class="page" id="page-analytics">
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="temperatureAnalysis">Temperature analysis</h3></div>
+          <div class="chart-container"><canvas id="analytics-temp-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="humidityAnalysis">Humidity analysis</h3></div>
+          <div class="chart-container"><canvas id="analytics-rh-chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="uniformityAnalysis">Drying uniformity analysis</h3></div>
+          <div id="uniformity-analysis-body"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="powerAnalysis">Power & energy analysis</h3></div>
+          <div id="power-analysis-body"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="batchComparison">Batch comparison</h3></div>
+          <div id="batch-comparison-body"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="cycleAnalysis">Drying cycle analysis</h3></div>
+          <div class="callout note">
+            <span data-i18n="futurePlaceholder">Reserved for future experimentally-derived drying model — not yet implemented</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================== SYSTEM PAGE ===================== -->
+    <section class="page" id="page-system">
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="language">Language</h3></div>
+          <p class="hint" data-i18n="languageDesc" style="margin-bottom:12px;display:block;">Choose the interface language.</p>
+          <select class="field" id="lang-select-system" style="width:100%;">
+            <option value="en">English</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+          </select>
+        </div>
+
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="deviceConnectivity">Device & connectivity</h3></div>
+          <div id="connectivity-body"></div>
+        </div>
+      </div>
+
+      <!-- ============= SIMULATION CONTROL ============= -->
+      <div class="section">
+        <div class="section-label" data-i18n="simulationControlTitle">Simulation mode</div>
+        <div class="callout info">
+          <span data-i18n="simulationControlNote">These controls only affect the simulated data model below. They will have no effect once the dashboard is connected to real ESP32 sensor hardware.</span>
+        </div>
+      </div>
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="simBatchControl">Batch control</h3></div>
+          <div class="settings-row">
+            <div class="k" data-i18n="currentBatch">Current batch</div>
+            <div class="v num" id="sim-batch-id-val">#024</div>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="stage">Stage</div>
+            <div class="v" id="sim-batch-stage-val">—</div>
+          </div>
+          <div class="batch-actions" style="margin-top:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="sim-btn-start" data-i18n="startBatch">Start batch</button>
+            <button class="btn btn-outline" id="sim-btn-pause" data-i18n="pauseBatch">Pause</button>
+            <button class="btn btn-outline" id="sim-btn-resume" data-i18n="resumeBatch">Resume</button>
+            <button class="btn btn-ghost" id="sim-btn-complete" data-i18n="completeBatch">Force complete</button>
+            <button class="btn btn-ghost" id="sim-btn-stop" data-i18n="stopBatch">Stop batch</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="simSpeed">Simulation speed</h3></div>
+          <p class="hint" data-i18n="simSpeedDesc" style="display:block; margin-bottom:12px;">Fast-forward simulated time to preview a full drying cycle quickly.</p>
+          <div class="chart-tabs" id="sim-speed-tabs">
+            <button class="chart-tab" data-speed="1">1×</button>
+            <button class="chart-tab" data-speed="5">5×</button>
+            <button class="chart-tab" data-speed="10">10×</button>
+            <button class="chart-tab" data-speed="30">30×</button>
+            <button class="chart-tab" data-speed="60">60×</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row">
+            <h3 data-i18n="simEnvControl">Environmental simulation</h3>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="simAutoEnv">Automatic environment model</div>
+            <label class="switch"><input type="checkbox" id="sim-env-auto-toggle" checked><span class="slider"></span></label>
+          </div>
+          <div class="grid grid-4" id="sim-env-zone-grid" style="margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="simPowerControl">Power simulation</h3></div>
+          <div class="settings-row">
+            <div class="k" data-i18n="simAutoPower">Automatic power model</div>
+            <label class="switch"><input type="checkbox" id="sim-power-auto-toggle" checked><span class="slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="solarStatus">Solar status</div>
+            <label class="switch"><input type="checkbox" id="sim-solar-toggle"><span class="slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="batteryLevel">Battery level</div>
+            <div><input type="number" id="sim-battery-input" min="0" max="100"> %</div>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="charging">Charging</div>
+            <label class="switch"><input type="checkbox" id="sim-charging-toggle"><span class="slider"></span></label>
+          </div>
+          <div class="batch-actions" style="margin-top:10px; flex-wrap:wrap;">
+            <button class="btn btn-outline" id="sim-btn-power-interruption" data-i18n="simPowerInterruption">Simulate power interruption</button>
+            <button class="btn btn-outline" id="sim-btn-low-battery" data-i18n="simLowBattery">Simulate low battery</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="simFaultControl">Fault / alert simulation</h3></div>
+          <div class="grid grid-2" style="gap:8px;">
+            <button class="btn btn-outline" id="sim-fault-hightemp" data-i18n="alertHighTemp">High temperature</button>
+            <button class="btn btn-outline" id="sim-fault-highrh" data-i18n="alertHighRH">High relative humidity</button>
+            <button class="btn btn-outline" id="sim-fault-sensor" data-i18n="alertSensorError">Sensor communication error</button>
+            <button class="btn btn-outline" id="sim-fault-esp32" data-i18n="alertEsp32Disconnected">ESP32 disconnected</button>
+            <button class="btn btn-outline" id="sim-fault-wifi" data-i18n="alertNetworkDisconnected">Local network disconnected</button>
+            <button class="btn btn-outline" id="sim-fault-sd" data-i18n="alertSdUnavailable">SD card unavailable</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="simScenarios">Scenario presets</h3></div>
+          <div class="grid grid-3" style="gap:8px;">
+            <button class="btn btn-outline" id="sim-scenario-normal" data-i18n="scenarioNormal">Normal drying day</button>
+            <button class="btn btn-outline" id="sim-scenario-hot" data-i18n="scenarioHot">Hot & dry day</button>
+            <button class="btn btn-outline" id="sim-scenario-humid" data-i18n="scenarioHumid">Humid / monsoon day</button>
+            <button class="btn btn-outline" id="sim-scenario-power" data-i18n="scenarioPowerOutage">Power outage</button>
+            <button class="btn btn-outline" id="sim-scenario-sensor" data-i18n="scenarioSensorFault">Sensor & connectivity fault</button>
+          </div>
+          <div class="batch-actions" style="margin-top:16px;">
+            <button class="btn btn-danger" id="sim-btn-reset" data-i18n="simReset">Reset simulation</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="voiceCommand">Voice command</h3></div>
+
+          <div class="settings-row">
+            <div><div class="k" data-i18n="voiceEnable">Enable voice command</div></div>
+            <label class="switch"><input type="checkbox" id="voice-enable-toggle"><span class="slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div><div class="k" data-i18n="voiceLanguage">Voice language</div></div>
+            <select class="field" id="voice-lang-select">
+              <option value="en-IN">English (India)</option>
+              <option value="ta-IN">தமிழ்</option>
+              <option value="hi-IN">हिन्दी</option>
+              <option value="te-IN">తెలుగు</option>
+            </select>
+          </div>
+
+          <div id="voice-unsupported-note" class="callout note" style="display:none; margin-top:12px;" >
+            <span data-i18n="micUnsupported">Speech recognition is not supported in this browser.</span>
+          </div>
+
+          <div id="voice-controls" class="voice-panel" style="margin-top:16px;">
+            <button class="mic-large" id="mic-large-btn">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg>
+            </button>
+            <div class="voice-transcript">
+              <div class="section-label" data-i18n="recognized">Recognized</div>
+              <div class="transcript-box" id="voice-transcript-text">—</div>
+              <div class="section-label" style="margin-top:10px;" data-i18n="commandResult">Result</div>
+              <div class="transcript-box" id="voice-result-text">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section grid grid-2">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="notifications">Notifications</h3></div>
+          <div class="settings-row"><div class="k" data-i18n="notifyTemp">Temperature alerts</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="settings-row"><div class="k" data-i18n="notifyHumidity">Humidity alerts</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="settings-row"><div class="k" data-i18n="notifyBattery">Battery alerts</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="settings-row"><div class="k" data-i18n="notifyCompletion">Drying completion</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="settings-row"><div class="k" data-i18n="notifySensorError">Sensor errors</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="settings-row"><div class="k" data-i18n="notifyConnectivity">Connectivity errors</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="dataStorage">Data storage</h3></div>
+          <div class="settings-row"><div class="k" data-i18n="localDatabase">Local database</div><span class="status-pill normal" data-i18n="connected">Connected</span></div>
+          <div class="settings-row"><div class="k" data-i18n="sdCard">SD card</div><span class="status-pill normal" data-i18n="available">Available</span></div>
+          <div class="settings-row"><div class="k" data-i18n="dataLogging">Data logging</div><span class="status-pill normal" data-i18n="enabled">Enabled</span></div>
+          <div class="settings-row"><div class="k" data-i18n="samplingInterval">Sensor sampling interval</div><input type="number" value="5" style="width:80px;"> s</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <div class="card-title-row"><h3 data-i18n="dryerSettings">Dryer settings</h3></div>
+          <div class="callout note" style="margin-bottom:14px;">
+            <span data-i18n="validatedNote">No parameters have been experimentally validated yet. All values below are configurable demonstration defaults.</span>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="targetTemp">Target/reference temperature</div>
+            <div><input type="number" id="target-temp-input"> °C</div>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="tempSafetyLimit">Temperature safety limit</div>
+            <div><input type="number" value="65"> °C</div>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="loggingInterval">Data logging interval</div>
+            <div><input type="number" value="30"> s</div>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="mode">Mode</div>
+            <select class="field">
+              <option data-i18n="modeAuto">Automatic</option>
+              <option data-i18n="modeManual">Manual</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="tempUnit">Temperature unit</div>
+            <select class="field">
+              <option>°C</option>
+              <option>°F</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <div class="k" data-i18n="timeFormat">Time format</div>
+            <select class="field">
+              <option value="24h">24h</option>
+              <option value="12h">12h</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== CONFIRM MODAL ===================== -->
+<div class="modal-backdrop" id="confirm-modal-backdrop">
+  <div class="modal">
+    <h4 data-i18n="confirmAction">Confirm action</h4>
+    <p id="confirm-modal-text">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="confirm-cancel-btn" data-i18n="cancel">Cancel</button>
+      <button class="btn btn-primary" id="confirm-ok-btn" data-i18n="confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="js/translations.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/dataService.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/voice.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // keep the System-page language selector in sync with the header one
+  document.addEventListener("DOMContentLoaded", () => {
+    const sysSel = document.getElementById("lang-select-system");
+    sysSel.value = getLanguage();
+    sysSel.onchange = () => setLanguage(sysSel.value);
+    document.addEventListener("languagechange", () => (sysSel.value = getLanguage()));
+  });
+</script>
+</body>
+</html>
